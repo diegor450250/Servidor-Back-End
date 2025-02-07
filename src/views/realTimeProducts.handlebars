@@ -1,0 +1,63 @@
+<form id="newP" class="formulario" action="">
+    <input id="nombreP" type="text" placeholder="Ingrese el nombre">
+    <button type="submit"> Agregar </button>
+</form>
+
+<div id="productos">
+
+</div>
+
+
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+<script src="../public/main.js"></script>
+<script>
+    const socket = io();
+
+    const form = document.getElementById("newP");
+    const nombre = document.querySelector("input");
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if(nombre.value) {
+            socket.emit("new", nombre.value);
+            nombre.value = "";
+        }
+    })
+
+    socket.on("productosLog", (data) => {
+        const contenedor = document.getElementById("productos");
+        contenedor.innerHTML = '';
+        data.forEach(element => {
+            const divP = document.createElement("div")
+            let product = document.createElement("p");
+            let editarP = document.createElement("button");
+            let inputP = document.createElement("input");
+            let eliminarP = document.createElement("button");
+            product.textContent = "Id: " + element.id + ", Nombre: " + element.nombre;
+            divP.className = "divProducto";
+            eliminarP.textContent = "Eliminar";
+            editarP.textContent = "Editar";
+            inputP.placeholder = "Ingrese el nuevo nombre";
+            inputP.id = element.nombre;
+            editarP.addEventListener("click", () => {
+                const nombre = document.getElementById(element.nombre);
+                if (nombre.value === ""){
+                    return;
+                }
+                let p = {
+                    id: element.id,
+                    nombre: nombre.value
+                }
+                socket.emit("editar", p);
+            });
+            eliminarP.addEventListener("click", () => {
+                socket.emit("eliminar", element.id)
+            });
+            contenedor.appendChild(divP);
+            divP.appendChild(product);
+            divP.appendChild(inputP);
+            divP.appendChild(editarP);
+            divP.appendChild(eliminarP);
+        });
+    })
+</script>

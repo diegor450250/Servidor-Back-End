@@ -1,0 +1,35 @@
+<div id="productos">
+
+</div>
+
+<script>
+    
+    let products = [
+        {
+            id: 1,
+            nombre: "producto1",
+        },
+        {
+            id: 2,
+            nombre: "producto2"
+        },
+        {
+            id: 3,
+            nombre: "producto3"
+        }
+    ]
+
+    leerProductos();
+
+    function leerProductos() {
+        const contenedor = document.getElementById("productos");
+        products.forEach(element => {
+            const divP = document.createElement("div");
+            divP.className = "divProducto";
+            let product = document.createElement("p");
+            product.textContent = "Id: " + element.id + ", Nombre: " + element.nombre;
+            contenedor.appendChild(divP);
+            divP.appendChild(product);
+        } );
+    }
+</script>
